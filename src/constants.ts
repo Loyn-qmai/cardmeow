@@ -9,15 +9,17 @@ export const CAT_INFO = {
     sleep: 16, // hours/day
   },
   gallery: [
-    { url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop", caption: "Đang suy tư về cuộc đời (hoặc về đồ ăn)" },
-    { url: "https://images.unsplash.com/photo-1573865526739-10659fef78a1?q=80&w=2030&auto=format&fit=crop", caption: "Tư thế sẵn sàng vồ mồi" },
-    { url: "https://images.unsplash.com/photo-1495360010541-f48722b34f7d?q=80&w=1936&auto=format&fit=crop", caption: "Buổi tắm nắng thư giãn" },
-    { url: "https://images.unsplash.com/photo-1533733503254-35863048821d?q=80&w=2070&auto=format&fit=crop", caption: "Bậc thầy liếc xéo" }
+    { url: "/images/muoi2.jfif", caption: "Nhìn cái meo gì ??" },
+    { url: "/images/muoi3.jfif", caption: "36 thế ngủ thất truyền" },
+    { url: "/images/muoi7.jfif", caption: "72 thế ngủ gia truyền" },
+    { url: "/images/muoi4.jfif", caption: "Đội nón bảo hiểm đi tất thật sexy" },
+    { url: "/images/muoi6.jfif", caption: "Tối nay ăn gì nhỉ?" },
+    { url: "/images/muoi5.jfif", caption: "Ỉa thối vc" }
   ],
   timeline: [
-    { year: "2021", event: "Chính thức gia nhập gia đình và chiếm trọn trái tim" },
-    { year: "2022", event: "Lần đầu tiên bắt được một chú ruồi (thắng lợi đầu đời)" },
-    { year: "2023", event: "Đạt danh hiệu 'Vua Ngủ Nướng'" },
-    { year: "2024", event: "Trở thành người bạn đồng hành ấm áp nhất" }
+    { year: "06/2024", event: "Chính thức gia nhập gia đình Park Link" },
+    { year: "10/08/2025", event: "Mẹ đi lấy chồng mới" },
+    { year: "04/2026", event: "Đạt danh hiệu 'Nhân viên Bảo Vệ toilet fulltime'" },
+    { year: "05/2026", event: "Trở thành con mèo ỉa thối đái bậy" }
   ]
 };
