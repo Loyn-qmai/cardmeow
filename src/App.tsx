@@ -386,11 +386,11 @@ function Timeline({ sectionId }: { sectionId: string }) {
             className={`flex flex-col sm:flex-row items-center gap-8 sm:gap-20 text-center sm:text-left ${i % 2 === 0 ? '' : 'sm:flex-row-reverse sm:text-right'}`}
           >
             <div className="flex-1 space-y-4">
-               <div className="text-5xl sm:text-7xl font-serif text-olive-drab/20 italic font-black">{item.year}</div>
+               <div className="text-5xl sm:text-7xl font-serif text-olive-drab/40 italic font-black">{item.year}</div>
                <div className="text-2xl sm:text-3xl text-stone-700 font-light leading-snug">{item.event}</div>
             </div>
             <div className="hidden sm:block w-px h-24 bg-gradient-to-b from-stone-100 via-stone-300 to-stone-100" />
-            <div className="flex-1 text-stone-300 font-sans text-xs uppercase tracking-[0.5em] font-black opacity-30">
+            <div className="flex-1 text-stone-500 font-sans text-xs uppercase tracking-[0.5em] font-black">
                Chapter {i + 1}
             </div>
           </motion.div>
