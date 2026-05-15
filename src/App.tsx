@@ -5,22 +5,23 @@ import { Camera, Heart, Info, Clock, Plus, Trash2 } from "lucide-react";
 
 // --- Components ---
 
-function HeartBurst({ x, y, id, onComplete }: { x: number, y: number, id: number, onComplete: (id: number) => void }) {
+function HeartBurst({ x, y, id, onComplete }: { x: number, y: number, id: number, onComplete: (id: number) => void, key?: number }) {
   return (
     <motion.div
+      key={id}
       initial={{ opacity: 1, scale: 0, x, y }}
       animate={{ 
-        opacity: 0, 
-        scale: [1, 2, 1.5],
-        x: x + (Math.random() - 0.5) * 400, 
-        y: y - 400 - Math.random() * 200,
-        rotate: (Math.random() - 0.5) * 90
+        opacity: [1, 1, 0], 
+        scale: [0.5, 1.5, 1],
+        x: x + (Math.random() - 0.5) * 600, 
+        y: y - 500 - Math.random() * 300,
+        rotate: (Math.random() - 0.5) * 120
       }}
-      transition={{ duration: 1.5, ease: "easeOut" }}
+      transition={{ duration: 1.8, ease: "easeOut" }}
       onAnimationComplete={() => onComplete(id)}
-      className="fixed pointer-events-none z-[100] text-red-500"
+      className="fixed pointer-events-none z-[100] text-red-500 drop-shadow-xl"
     >
-      <Heart fill="currentColor" size={32 + Math.random() * 32} />
+      <Heart fill="currentColor" size={24 + Math.random() * 48} />
     </motion.div>
   );
 }
@@ -28,6 +29,7 @@ function HeartBurst({ x, y, id, onComplete }: { x: number, y: number, id: number
 export default function App() {
   const [hearts, setHearts] = useState<{ id: number, x: number, y: number }[]>([]);
   const [galleryImages, setGalleryImages] = useState(CAT_INFO.gallery);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const spawnHearts = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     // Handle both mouse and touch events
@@ -46,24 +48,12 @@ export default function App() {
     setHearts(prev => prev.filter(h => h.id !== id));
   };
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setGalleryImages(prev => [{ url, caption: "Khoảnh khắc mới" }, ...prev]);
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setGalleryImages(prev => prev.filter((_, i) => i !== index));
-  };
-
   return (
     <div className="min-h-screen selection:bg-olive-drab/20 overflow-x-hidden">
       <Navigation />
       
       <AnimatePresence>
-        {hearts.map(h => (
+        {hearts.map((h: { id: number, x: number, y: number }) => (
           <HeartBurst key={h.id} id={h.id} x={h.x} y={h.y} onComplete={removeHeart} />
         ))}
       </AnimatePresence>
@@ -74,10 +64,45 @@ export default function App() {
         <GallerySlider 
           sectionId="gallery" 
           images={galleryImages} 
-          onUpload={handleUpload} 
+          onSelect={(url) => setSelectedImage(url)}
         />
         <Timeline sectionId="history" />
       </main>
+
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedImage(null)}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 cursor-zoom-out overflow-hidden"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-[90%] max-h-[80%] flex items-center justify-center"
+            >
+              <img 
+                src={selectedImage}
+                alt="Full view"
+                className="max-w-full max-h-[60vh] sm:max-h-[75vh] object-contain rounded-xl shadow-2xl border-2 border-white/5"
+                referrerPolicy="no-referrer"
+              />
+              <button 
+                className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors p-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedImage(null);
+                }}
+              >
+                <Plus size={28} className="rotate-45" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <footer className="py-12 text-center text-stone-400 text-xs font-sans uppercase tracking-[0.2em] border-t border-stone-100 italic">
         Thế giới của {CAT_INFO.name} &bull; {new Date().getFullYear()}
@@ -172,27 +197,43 @@ function Hero({ sectionId, onBoop }: { sectionId: string, onBoop: (e: React.Mous
       </motion.div>
       
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="relative order-1 lg:order-2 flex justify-center"
+        className="relative order-1 lg:order-2 flex justify-center w-full"
       >
-        <div className="aspect-square w-full max-w-[400px] sm:max-w-[500px] lg:max-w-[550px] overflow-hidden rounded-full shadow-2xl relative z-10 border-[12px] border-white">
-          <img 
-            src="/images/muoi8.jfif?q=80&w=1920&auto=format&fit=crop" 
-            alt="Majestic Cat"
-            className="w-full h-full object-cover"
-            loading="eager"
-            referrerPolicy="no-referrer"
-          />
+        <div className="relative group/hero">
+          <motion.div 
+            animate={{ 
+              y: [0, -15, 0],
+              rotate: [-1, 1, -1]
+            }}
+            transition={{ 
+              duration: 6, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+            className="aspect-square w-[280px] sm:w-[420px] lg:w-[500px] overflow-hidden rounded-full shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] relative z-10 border-[8px] sm:border-[16px] border-white ring-1 ring-stone-100"
+          >
+            <img 
+              src="/images/muoi8.jfif?q=80&w=1920&auto=format&fit=crop" 
+              alt="Majestic Cat"
+              className="w-full h-full object-cover object-[50%_70%] grayscale-[0.2] hover:grayscale-0 transition-all duration-700"
+              loading="eager"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+          
+          <motion.div 
+            animate={{ rotate: [-12, -8, -12], y: [0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            className="absolute -bottom-2 -left-4 sm:-bottom-6 sm:-left-8 w-24 h-24 sm:w-36 sm:h-36 bg-stone-900 rounded-full flex items-center justify-center text-white text-center p-4 text-[9px] sm:text-xs font-sans uppercase tracking-[0.3em] shadow-2xl z-20 border-4 border-warm-beige leading-relaxed"
+          >
+            M-Meow <br/>Muối Buồn
+          </motion.div>
+
+          <div className="absolute -top-4 -right-4 w-12 h-12 sm:w-20 sm:h-20 bg-olive-drab rounded-full rotate-12 z-0 opacity-20 blur-2xl" />
         </div>
-        <motion.div 
-          animate={{ rotate: [8, 6, 8] }}
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-          className="absolute -bottom-2 -left-2 sm:-bottom-4 sm:-left-4 w-28 h-28 sm:w-36 sm:h-36 bg-stone-800 rounded-full flex items-center justify-center text-white text-center p-4 text-[10px] sm:text-xs font-sans uppercase tracking-[0.2em] shadow-2xl z-20 border-4 border-warm-beige leading-relaxed"
-        >
-          Muối <br/>Buồn
-        </motion.div>
       </motion.div>
     </section>
   );
@@ -247,10 +288,10 @@ function Profile({ sectionId }: { sectionId: string }) {
   );
 }
 
-function GallerySlider({ sectionId, images, onUpload }: { 
+function GallerySlider({ sectionId, images, onSelect }: { 
   sectionId: string, 
   images: typeof CAT_INFO.gallery,
-  onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onSelect: (url: string) => void
 }) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = React.useState(false);
@@ -260,10 +301,10 @@ function GallerySlider({ sectionId, images, onUpload }: {
     if (!scrollContainer || isPaused) return;
 
     const interval = setInterval(() => {
-      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth) {
+      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth - scrollContainer.clientWidth - 10) {
         scrollContainer.scrollTo({ left: 0, behavior: "smooth" });
       } else {
-        scrollContainer.scrollBy({ left: 300, behavior: "smooth" });
+        scrollContainer.scrollBy({ left: 260, behavior: "smooth" });
       }
     }, 4000);
 
@@ -274,14 +315,9 @@ function GallerySlider({ sectionId, images, onUpload }: {
     <section id={sectionId} className="space-y-12">
       <div className="flex justify-between items-center px-4 sm:px-0">
         <div className="space-y-1">
-          <span className="font-sans text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Album Kỷ Niệm</span>
-          <h2 className="text-4xl sm:text-5xl italic font-light">Nhật ký của Muối</h2>
+          <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">Album Kỷ Niệm</span>
+          <h2 className="text-4xl sm:text-5xl italic font-light text-stone-800">Nhật ký của Muối</h2>
         </div>
-        
-        <label className="border border-stone-200 hover:bg-stone-50 cursor-pointer w-12 h-12 flex items-center justify-center rounded-full transition-all active:scale-90">
-          <Plus size={18} className="text-stone-600" />
-          <input type="file" className="hidden" accept="image/*" onChange={onUpload} />
-        </label>
       </div>
 
       <div 
@@ -291,22 +327,28 @@ function GallerySlider({ sectionId, images, onUpload }: {
       >
         <div 
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto no-scrollbar pb-8 px-4 sm:px-0 scroll-smooth snap-x snap-mandatory"
+          className="flex gap-4 sm:gap-6 overflow-x-auto no-scrollbar pb-8 px-4 sm:px-0 scroll-smooth snap-x snap-mandatory"
         >
           {images.map((item, i) => (
             <motion.div 
               key={i}
-              className="min-w-[280px] sm:min-w-[380px] aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-stone-100 shrink-0 relative snap-center shadow-lg hover:shadow-2xl transition-shadow duration-500"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="w-[180px] sm:w-[240px] aspect-square rounded-full overflow-hidden bg-stone-100 shrink-0 relative snap-center shadow-lg hover:shadow-xl transition-all duration-500 group/image cursor-zoom-in border-4 border-white ring-1 ring-stone-100"
+              onClick={() => onSelect(item.url)}
             >
               <img 
                 src={item.url} 
                 alt={item.caption} 
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                 loading="lazy"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex flex-col justify-end p-8">
-                <p className="text-white text-base italic font-light tracking-wide">{item.caption}</p>
+              
+              {/* Overlay for caption */}
+              <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center">
+                <p className="text-white text-xs sm:text-sm italic font-light tracking-wide leading-tight px-4">{item.caption}</p>
               </div>
             </motion.div>
           ))}
