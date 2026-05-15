@@ -41,7 +41,10 @@ export default function App() {
       x: clientX - 16,
       y: clientY - 16
     }));
-    setHearts(prev => [...prev, ...newHearts]);
+    setHearts(prev => {
+      const combined = [...prev, ...newHearts];
+      return combined.length > 12 ? combined.slice(-12) : combined;
+    });
   }, []);
 
   const removeHeart = (id: number) => {
@@ -229,7 +232,7 @@ function Hero({ sectionId, onBoop }: { sectionId: string, onBoop: (e: React.Mous
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
             className="absolute -bottom-2 -left-4 sm:-bottom-6 sm:-left-8 w-24 h-24 sm:w-36 sm:h-36 bg-stone-900 rounded-full flex items-center justify-center text-white text-center p-4 text-[9px] sm:text-xs font-sans uppercase tracking-[0.3em] shadow-2xl z-20 border-4 border-warm-beige leading-relaxed"
           >
-            M-Meow <br/>Muối Buồn
+           Muối Buồn
           </motion.div>
 
           <div className="absolute -top-4 -right-4 w-12 h-12 sm:w-20 sm:h-20 bg-olive-drab rounded-full rotate-12 z-0 opacity-20 blur-2xl" />
@@ -250,7 +253,7 @@ function Profile({ sectionId }: { sectionId: string }) {
       <div className="grid lg:grid-cols-5 gap-6 sm:gap-10">
         <div className="lg:col-span-2 space-y-6">
           <div className="soft-card p-10 sm:p-12 space-y-12 h-full flex flex-col justify-center bg-stone-50/50 border-stone-200/50">
-            <h3 className="text-2xl italic border-b border-stone-200/50 pb-6 font-medium">Bản thảo lý lịch</h3>
+            <h3 className="text-2xl italic border-b border-stone-200/50 pb-6 font-medium">Lý lịch tư pháp</h3>
             <div className="space-y-8">
               {[
                 { label: "Giống loài", val: CAT_INFO.breed },
@@ -332,23 +335,25 @@ function GallerySlider({ sectionId, images, onSelect }: {
           {images.map((item, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="w-[180px] sm:w-[240px] aspect-square rounded-full overflow-hidden bg-stone-100 shrink-0 relative snap-center shadow-lg hover:shadow-xl transition-all duration-500 group/image cursor-zoom-in border-4 border-white ring-1 ring-stone-100"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              className="w-[220px] sm:w-[280px] aspect-square rounded-full overflow-hidden bg-stone-100 shrink-0 relative snap-center shadow-lg transition-transform duration-300 hover:scale-[1.02] cursor-zoom-in border-4 border-white ring-1 ring-stone-100 will-change-transform"
               onClick={() => onSelect(item.url)}
             >
               <img 
                 src={item.url} 
                 alt={item.caption} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
+                className="w-full h-full object-cover"
                 loading="lazy"
                 referrerPolicy="no-referrer"
               />
               
-              {/* Overlay for caption */}
-              <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center p-6 text-center">
-                <p className="text-white text-xs sm:text-sm italic font-light tracking-wide leading-tight px-4">{item.caption}</p>
+              {/* Permanent caption at bottom */}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-stone-900/90 via-stone-900/40 to-transparent pt-10 pb-5 px-6 text-center">
+                <p className="text-white text-[10px] sm:text-xs italic font-light tracking-wide leading-tight line-clamp-2 drop-shadow-lg">
+                  {item.caption}
+                </p>
               </div>
             </motion.div>
           ))}
