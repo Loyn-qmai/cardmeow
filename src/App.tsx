@@ -179,7 +179,7 @@ function Hero({ sectionId, onBoop }: { sectionId: string, onBoop: (e: React.Mous
       >
         <div className="aspect-square w-full max-w-[400px] sm:max-w-[500px] lg:max-w-[550px] overflow-hidden rounded-full shadow-2xl relative z-10 border-[12px] border-white">
           <img 
-            src="https://images.unsplash.com/photo-1548247416-ec66f4900b2e?q=80&w=1920&auto=format&fit=crop" 
+            src="/images/muoi8.jfif?q=80&w=1920&auto=format&fit=crop" 
             alt="Majestic Cat"
             className="w-full h-full object-cover"
             loading="eager"
